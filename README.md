@@ -26,3 +26,4 @@ I believe it is because that when AppSync API adds an RDS datasource, it creates
 ## Notes
 * The CDK version is locked at 1.130.0, this is the version imposed by our organisation before we upgrade to CDK 2.
 * I understand KMS requires the use of key policies, have read [the doc](https://docs.aws.amazon.com/cdk/api/v1/docs/aws-kms-readme.html#key-policies) and tried setting `@aws-cdk/aws-kms:defaultKeyPolicies` feature flag to `true` but it is not working.
+* If have to, I can move the creation of the customer managed key to the AppSync stack to work around the problem. However in our real project, my idea is to create one customer managed key in Data stack and reference it by multiple places in stacks depending on the data stack. Also we might rebuild the AppSync and other service stacks if required but would not delete the Data stack in production. Hope this makes sense.
