@@ -3,11 +3,13 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as sm from '@aws-cdk/aws-secretsmanager';
 import * as appsync from '@aws-cdk/aws-appsync';
 import * as rds from '@aws-cdk/aws-rds';
+import * as iam from '@aws-cdk/aws-iam';
 
 interface AppsyncCdkRdsStackProps extends cdk.StackProps {
   bucket: s3.Bucket;
   dbCluster: rds.IServerlessCluster;
   dbSecret: sm.Secret;
+  appSyncServiceRole: iam.IRole;
 }
 
 export class AppsyncCdkRdsStack extends cdk.Stack {
@@ -32,6 +34,12 @@ export class AppsyncCdkRdsStack extends cdk.Stack {
       },
     });
 
-    const rdsDataSource = api.addRdsDataSource('rdsDataSource', props.dbCluster, props.dbSecret, 'test');
+    const rdsDataSource = new appsync.RdsDataSource(this, 'rdsDataSource', {
+      api: api,
+      serverlessCluster: props.dbCluster,
+      secretStore: props.dbSecret,
+      databaseName: 'test',
+      serviceRole: props.appSyncServiceRole,
+    });
   }
 }

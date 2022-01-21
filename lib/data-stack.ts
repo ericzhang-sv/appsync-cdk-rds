@@ -3,6 +3,7 @@ import * as kms from '@aws-cdk/aws-kms';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as rds from '@aws-cdk/aws-rds';
+import * as iam from '@aws-cdk/aws-iam';
 import * as sm from '@aws-cdk/aws-secretsmanager';
 
 interface DataStackProps extends cdk.StackProps {
@@ -14,6 +15,7 @@ export class DataStack extends cdk.Stack {
   public readonly bucket: s3.Bucket;
   public readonly dbSecret: sm.Secret;
   public readonly dbCluster: rds.ServerlessCluster;
+  public readonly appSyncServiceRole: iam.IRole;
 
   constructor(scope: cdk.Construct, id: string, props: DataStackProps) {
     super(scope, id, props);
@@ -33,6 +35,8 @@ export class DataStack extends cdk.Stack {
       },
       encryptionKey: this.customerKey,
     });
+
+    this.appSyncServiceRole = new iam.Role(this, 'AppSyncServiceRole', { assumedBy: new iam.ServicePrincipal('appsync') });
 
     /**
      * Create the Aurora Server Cluster
