@@ -9,6 +9,10 @@ const app = new cdk.App();
 const networkStack = new NetworkStack(app, 'NetworkStack');
 
 const dataStack = new DataStack(app, 'DataStack', { vpc: networkStack.vpc });
-const { bucket, dbCluster, dbSecret } = dataStack;
 
-const svcStack = new AppsyncCdkRdsStack(app, 'AppsyncCdkRdsStack', { bucket, dbCluster, dbSecret });
+const svcStack = new AppsyncCdkRdsStack(app, 'AppsyncCdkRdsStack', {
+  bucket: dataStack.bucket,
+  dbCluster: dataStack.dbCluster,
+  dbSecret: dataStack.dbSecret,
+  appSyncServiceRole: dataStack.appSyncServiceRole,
+});
